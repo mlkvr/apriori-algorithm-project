@@ -4,6 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Apriori Analysis</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
 </head>
 <body>
     <h1>Upload Your Dataset and Set Minimum Support Threshold</h1>
@@ -19,6 +35,25 @@
         {% elif graph_url %}
             <h2>Apriori Analysis Results</h2>
             <img src="{{ url_for('static', filename=graph_url) }}" alt="Apriori Results">
+            <h2>Association Rules</h2>
+            <table>
+                <tr>
+                    <th>Antecedents</th>
+                    <th>Consequents</th>
+                    <th>Support</th>
+                    <th>Confidence</th>
+                    <th>Lift</th>
+                </tr>
+                {% for rule in rules_table %}
+                <tr>
+                    <td>{{ rule.antecedents }}</td>
+                    <td>{{ rule.consequents }}</td>
+                    <td>{{ rule.support }}</td>
+                    <td>{{ rule.confidence }}</td>
+                    <td>{{ rule.lift }}</td>
+                </tr>
+                {% endfor %}
+            </table>
         {% endif %}
     </div>
 </body>

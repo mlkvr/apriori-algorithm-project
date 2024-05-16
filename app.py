@@ -11,6 +11,7 @@ app.config['UPLOAD_FOLDER'] = 'static'
 @app.route('/', methods=['GET', 'POST'])
 def index():
     graph_url = None
+    rules_table = None
     message = None
     if request.method == 'POST':
         if 'file' not in request.files or 'min_support' not in request.form:
@@ -33,7 +34,8 @@ def index():
         rules, message = apply_apriori(df, min_support)
         if rules is not None:
             graph_url = visualize_rules(rules)
-    return render_template('index.html', graph_url=graph_url, message=message)
+            rules_table = format_rules(rules)
+    return render_template('index.html', graph_url=graph_url, rules_table=rules_table, message=message)
 
 def ensure_binary(df):
     """
@@ -69,6 +71,23 @@ def visualize_rules(rules):
     plt.savefig(graph_filepath)
     plt.close()
     return graph_filename
+
+def format_rules(rules):
+    """
+    Kuralları tablo formatında döndürür ve `confidence` değerine göre azalan şekilde sıralar.
+    """
+    rules = rules.sort_values(by='confidence', ascending=False)  # `confidence`a göre sıralama
+    rules_table = []
+    for _, row in rules.iterrows():
+        rule = {
+            'antecedents': ', '.join(list(row['antecedents'])),
+            'consequents': ', '.join(list(row['consequents'])),
+            'support': row['support'],
+            'confidence': row['confidence'],
+            'lift': row['lift']
+        }
+        rules_table.append(rule)
+    return rules_table
 
 if __name__ == '__main__':
     app.run(debug=True)
