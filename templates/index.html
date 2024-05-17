@@ -4,68 +4,76 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Apriori Analysis</title>
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap5.min.css">
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        table, th, td {
-            border: 1px solid black;
-        }
-        th, td {
-            padding: 15px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-    </style>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap5.min.js"></script>
 </head>
 <body>
-    <h1>Upload Your Dataset and Set Minimum Support Threshold</h1>
-    <form action="/" method="post" enctype="multipart/form-data">
-        <input type="file" name="file" accept=".csv" required>
-        <label for="min_support">Minimum Support Threshold:</label>
-        <input type="number" name="min_support" id="min_support" step="0.01" value="0.01" required>
-        <input type="submit" value="Upload and Analyze">
-    </form>
-    <div>
-        {% if message %}
-            <h2>{{ message }}</h2>
-        {% elif graph_url %}
-            <h2>Apriori Analysis Results</h2>
-            <img src="{{ url_for('static', filename=graph_url) }}" alt="Apriori Results">
-            <h2>Association Rules</h2>
-            <table id="rules_table" class="display">
-                <thead>
-                    <tr>
-                        <th>Antecedents</th>
-                        <th>Consequents</th>
-                        <th>Support</th>
-                        <th>Confidence</th>
-                        <th>Lift</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for rule in rules_table %}
-                    <tr>
-                        <td>{{ rule.antecedents }}</td>
-                        <td>{{ rule.consequents }}</td>
-                        <td>{{ rule.support }}</td>
-                        <td>{{ rule.confidence }}</td>
-                        <td>{{ rule.lift }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        {% endif %}
+    <div class="container my-5">
+        <h1 class="mb-4 text-center">Apriori Analysis</h1>
+        <form action="/" method="post" enctype="multipart/form-data" class="mb-5">
+            <div class="mb-3">
+                <label for="file" class="form-label">Upload Your Dataset</label>
+                <input type="file" name="file" accept=".csv" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="min_support" class="form-label">Minimum Support Threshold</label>
+                <input type="number" name="min_support" id="min_support" step="0.01" value="0.01" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Upload and Analyze</button>
+        </form>
+        <div>
+            {% if message %}
+                <div class="alert alert-warning" role="alert">
+                    {{ message }}
+                </div>
+            {% elif graph_url %}
+                <h2 class="mb-4 text-center">Apriori Analysis Results</h2>
+                <div class="text-center mb-4">
+                    <img src="{{ url_for('static', filename=graph_url) }}" alt="Apriori Results" class="img-fluid">
+                </div>
+                <h2 class="mb-4 text-center">Association Rules</h2>
+                <div class="table-responsive">
+                    <table id="rules_table" class="table table-striped table-bordered">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Antecedents</th>
+                                <th>Consequents</th>
+                                <th>Support</th>
+                                <th>Confidence</th>
+                                <th>Lift</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for rule in rules_table %}
+                            <tr>
+                                <td>{{ rule.antecedents }}</td>
+                                <td>{{ rule.consequents }}</td>
+                                <td>{{ rule.support }}</td>
+                                <td>{{ rule.confidence }}</td>
+                                <td>{{ rule.lift }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </div>
     </div>
     <script>
         $(document).ready(function() {
-            $('#rules_table').DataTable();
+            $('#rules_table').DataTable({
+                "pagingType": "simple_numbers", // Sayfalama butonlarını "Previous" ve "Next" şeklinde gösterir
+                "language": {
+                    "paginate": {
+                        "previous": "Previous",
+                        "next": "Next"
+                    }
+                }
+            });
         });
     </script>
 </body>
